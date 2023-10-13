@@ -41,10 +41,10 @@ app.get("/details", cors(corsOptions), (req, res) => {
 });
 
 const convertDataHeat = (data) => {
-  return data.map(item => ({
+  return data.map((item) => ({
     id: item.Month.toLowerCase(),
     data: Object.entries(item)
-      .filter(([key, value]) => key !== 'Month' && key !== "_id")
+      .filter(([key, value]) => key !== "Month" && key !== "_id")
       .map(([key, value]) => ({ x: key, y: value })),
   }));
 };
@@ -58,25 +58,28 @@ app.get("/details/heatmap", cors(corsOptions), async (req, res) => {
   //   // res.render('assignments',{items: data})
   // });
   try {
-
-    const data = await assignmentSch.find({}).lean().then((data)=> {return data});
+    const data = await assignmentSch
+      .find({})
+      .lean()
+      .then((data) => {
+        return data;
+      });
     // console.log(data);
     const convertedData = convertDataHeat(data);
     // console.log(convertedData);
-    res.json(convertedData);
-
+    res.send(convertedData);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 });
 
 const convertDataLine = (data) => {
-  return data.map(item => ({
+  return data.map((item) => ({
     id: item.Month.toLowerCase(),
     color: "hsl(105, 70%, 50%)",
     data: Object.entries(item)
-      .filter(([key, value]) => key !== 'Month' && key !== "_id")
+      .filter(([key, value]) => key !== "Month" && key !== "_id")
       .map(([key, value]) => ({ x: key, y: value })),
   }));
 };
@@ -90,28 +93,30 @@ app.get("/details/line", cors(corsOptions), async (req, res) => {
   //   // res.render('assignments',{items: data})
   // });
   try {
-
-    const data = await assignmentSch.find({}).lean().then((data)=> {return data});
+    const data = await assignmentSch
+      .find({})
+      .lean()
+      .then((data) => {
+        return data;
+      });
     // console.log(data);
     const convertedData = convertDataLine(data);
     // console.log(convertedData);
     res.json(convertedData);
-
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 });
 
 const convertData = (data) => {
-  return data.map(item => ({
+  return data.map((item) => ({
     id: item.Month.toLowerCase(),
     data: Object.entries(item)
-      .filter(([key, value]) => key !== 'Month' && key !== "_id")
+      .filter(([key, value]) => key !== "Month" && key !== "_id")
       .map(([key, value]) => ({ x: key, y: value })),
   }));
 };
-
 
 app.get("/details/piechart/:id", cors(corsOptions), async (req, res) => {
   // assignmentSch.find({}).then((data, err) => {
@@ -122,8 +127,9 @@ app.get("/details/piechart/:id", cors(corsOptions), async (req, res) => {
   //   // res.render('assignments',{items: data})
   // });
   try {
-    
-    const data = await assignmentSch.findById(req.params.id).then((data)=> {return data});
+    const data = await assignmentSch.findById(req.params.id).then((data) => {
+      return data;
+    });
     // console.log(data);
     const convertedData = [];
 
@@ -148,56 +154,55 @@ app.get("/details/piechart/:id", cors(corsOptions), async (req, res) => {
       "Excess_Shortfall_Normalised_KWh",
       "Excess_Shortfall_Normalised_in_percentage",
       "Excess_Shortfall_KWh",
-      "Excess_Shortfall__in_percentage"
+      "Excess_Shortfall__in_percentage",
     ];
-  // let k=0;
-  // console.log(data);
-  // for (let i in data) {
-  //   console.log(i);
-  //   for (let j in data[i]) {
-  //     const color = `hsl(10%, 70%, 50%)`;
-  
-  //     convertedData.push({
-  //       id: i,
-  //       label: i,
-  //       value: data[i][j],
-  //       color
-  //     });
-  //   }
-  // }
-//   data.forEach(res => {
-//     Object.entries(res).forEach(([key, value]) => {
-//     // console.log(key + ": " + value ); //subing console.log so it prints here
-//     const color = `hsl(10%, 70%, 50%)`;
-  
-//       convertedData.push({
-//         id: key,
-//         label: key,
-//         value: value,
-//         color
-//       });
-//     })
-// })
-// var dataa = JSON.stringify(data);
-var dataa = JSON.parse(data);
-dataa.forEach(function(obj, index){
-  console.log(index);
-  for (var key in obj){
-      console.log(key, obj[key]);
-      convertedData.push({
-                id: key,
-                label: key,
-                value: obj[key],
-                // color
-              });
-  }
-});
+    // let k=0;
+    // console.log(data);
+    // for (let i in data) {
+    //   console.log(i);
+    //   for (let j in data[i]) {
+    //     const color = `hsl(10%, 70%, 50%)`;
+
+    //     convertedData.push({
+    //       id: i,
+    //       label: i,
+    //       value: data[i][j],
+    //       color
+    //     });
+    //   }
+    // }
+    //   data.forEach(res => {
+    //     Object.entries(res).forEach(([key, value]) => {
+    //     // console.log(key + ": " + value ); //subing console.log so it prints here
+    //     const color = `hsl(10%, 70%, 50%)`;
+
+    //       convertedData.push({
+    //         id: key,
+    //         label: key,
+    //         value: value,
+    //         color
+    //       });
+    //     })
+    // })
+    // var dataa = JSON.stringify(data);
+    var dataa = JSON.parse(data);
+    dataa.forEach(function (obj, index) {
+      console.log(index);
+      for (var key in obj) {
+        console.log(key, obj[key]);
+        convertedData.push({
+          id: key,
+          label: key,
+          value: obj[key],
+          // color
+        });
+      }
+    });
     console.log(convertedData);
     res.json(convertedData);
-
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 });
 
