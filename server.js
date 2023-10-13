@@ -28,7 +28,6 @@ const upload = multer({ storage });
 
 app.use("/", express.static(path.join(__dirname, "public")));
 
-
 app.use("/", require("./routes/root"));
 
 app.get("/details", cors(corsOptions), (req, res) => {
@@ -40,6 +39,168 @@ app.get("/details", cors(corsOptions), (req, res) => {
     // res.render('assignments',{items: data})
   });
 });
+
+const convertDataHeat = (data) => {
+  return data.map(item => ({
+    id: item.Month.toLowerCase(),
+    data: Object.entries(item)
+      .filter(([key, value]) => key !== 'Month' && key !== "_id")
+      .map(([key, value]) => ({ x: key, y: value })),
+  }));
+};
+
+app.get("/details/heatmap", cors(corsOptions), async (req, res) => {
+  // assignmentSch.find({}).then((data, err) => {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   res.send(data);
+  //   // res.render('assignments',{items: data})
+  // });
+  try {
+
+    const data = await assignmentSch.find({}).lean().then((data)=> {return data});
+    // console.log(data);
+    const convertedData = convertDataHeat(data);
+    // console.log(convertedData);
+    res.json(convertedData);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+const convertDataLine = (data) => {
+  return data.map(item => ({
+    id: item.Month.toLowerCase(),
+    color: "hsl(105, 70%, 50%)",
+    data: Object.entries(item)
+      .filter(([key, value]) => key !== 'Month' && key !== "_id")
+      .map(([key, value]) => ({ x: key, y: value })),
+  }));
+};
+
+app.get("/details/line", cors(corsOptions), async (req, res) => {
+  // assignmentSch.find({}).then((data, err) => {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   res.send(data);
+  //   // res.render('assignments',{items: data})
+  // });
+  try {
+
+    const data = await assignmentSch.find({}).lean().then((data)=> {return data});
+    // console.log(data);
+    const convertedData = convertDataLine(data);
+    // console.log(convertedData);
+    res.json(convertedData);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+const convertData = (data) => {
+  return data.map(item => ({
+    id: item.Month.toLowerCase(),
+    data: Object.entries(item)
+      .filter(([key, value]) => key !== 'Month' && key !== "_id")
+      .map(([key, value]) => ({ x: key, y: value })),
+  }));
+};
+
+
+app.get("/details/piechart/:id", cors(corsOptions), async (req, res) => {
+  // assignmentSch.find({}).then((data, err) => {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   res.send(data);
+  //   // res.render('assignments',{items: data})
+  // });
+  try {
+    
+    const data = await assignmentSch.findById(req.params.id).then((data)=> {return data});
+    // console.log(data);
+    const convertedData = [];
+
+    // Define the properties and labels for the new data format
+    const properties = [
+      "PVSYST_GHI",
+      "PVSYST_GTI",
+      "PVSYST_Energy",
+      "Contractual_Energy",
+      "Actual_GTI",
+      "Actual_GHI",
+      "PVSyst_GTI_vs_Actual_GTI",
+      "PVSyst_GHI_vs_Actual_GHI",
+      "PVSyst_Energy_vs_Contractual_Energy",
+      "T_Cell_Avg_C",
+      "Actual_Inverter_Energy_KWh",
+      "Actual_Export_Energy_KWh",
+      "Actual_Import_Energy_KWh",
+      "AC_loss_per",
+      "Net_Energy",
+      "Normalised_Energy_KWh",
+      "Excess_Shortfall_Normalised_KWh",
+      "Excess_Shortfall_Normalised_in_percentage",
+      "Excess_Shortfall_KWh",
+      "Excess_Shortfall__in_percentage"
+    ];
+  // let k=0;
+  // console.log(data);
+  // for (let i in data) {
+  //   console.log(i);
+  //   for (let j in data[i]) {
+  //     const color = `hsl(10%, 70%, 50%)`;
+  
+  //     convertedData.push({
+  //       id: i,
+  //       label: i,
+  //       value: data[i][j],
+  //       color
+  //     });
+  //   }
+  // }
+//   data.forEach(res => {
+//     Object.entries(res).forEach(([key, value]) => {
+//     // console.log(key + ": " + value ); //subing console.log so it prints here
+//     const color = `hsl(10%, 70%, 50%)`;
+  
+//       convertedData.push({
+//         id: key,
+//         label: key,
+//         value: value,
+//         color
+//       });
+//     })
+// })
+// var dataa = JSON.stringify(data);
+var dataa = JSON.parse(data);
+dataa.forEach(function(obj, index){
+  console.log(index);
+  for (var key in obj){
+      console.log(key, obj[key]);
+      convertedData.push({
+                id: key,
+                label: key,
+                value: obj[key],
+                // color
+              });
+  }
+});
+    console.log(convertedData);
+    res.json(convertedData);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 app.get("/details/:id", cors(corsOptions), async (req, res) => {
   try {
     // const { id } = req.params;
