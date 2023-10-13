@@ -185,21 +185,45 @@ app.get("/details/piechart/:id", cors(corsOptions), async (req, res) => {
     //     })
     // })
     // var dataa = JSON.stringify(data);
-    var dataa = JSON.parse(data);
-    dataa.forEach(function (obj, index) {
-      console.log(index);
-      for (var key in obj) {
-        console.log(key, obj[key]);
-        convertedData.push({
-          id: key,
-          label: key,
-          value: obj[key],
-          // color
-        });
-      }
+    // var dataa = JSON.parse(data);
+    // dataa.forEach(function (obj, index) {
+    //   console.log(index);
+    //   for (var key in obj) {
+    //     console.log(key, obj[key]);
+    //     convertedData.push({
+    //       id: key,
+    //       label: key,
+    //       value: obj[key],
+    //       // color
+    //     });
+    //   }
+    // });
+    // console.log(convertedData);
+    // res.json(convertedData);
+    const result = {};
+const keys = Object.keys(data);
+for (let i = 0; i < keys.length; i++) {
+  const key = keys[i];
+  id = key;
+  result[key] = data[key];
+}
+
+const transformedData = [];
+
+for (const key in result._doc) {
+  if (key !== '_id' && key !== 'Month') {
+    transformedData.push({
+      id: key,
+      label: key,
+      value: result._doc[key],
+      color: `hsl(51, 70%, 50%)`,
     });
-    console.log(convertedData);
-    res.json(convertedData);
+  }
+}
+
+// console.log(transformedData);
+res.send(transformedData)
+
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
